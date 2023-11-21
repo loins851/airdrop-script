@@ -8,6 +8,7 @@ import {
 } from "@solana/spl-token";
 import { BN } from "bn.js";
 import * as bs58 from "bs58";
+import { getTxSize } from "../utils/get-tx-size";
 require("dotenv").config();
 
 const main = async () => {
@@ -69,6 +70,8 @@ const main = async () => {
       new u64(amount.toString())
     )
   );
+
+  console.log(getTxSize(tx, payer.publicKey))
 
   const txSig = await connection.sendTransaction(tx, [payer]);
 

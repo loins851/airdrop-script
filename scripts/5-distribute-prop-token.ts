@@ -2,7 +2,7 @@ import csvParser from "csv-parser";
 import fs from "fs";
 import process from "process";
 
-import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -13,6 +13,7 @@ import {
 
 import BN from "bn.js";
 import * as bs58 from "bs58";
+import { getTxSize } from "../utils/get-tx-size";
 require("dotenv").config();
 
 /**
@@ -78,11 +79,12 @@ const main = async () => {
   const writableStream = fs.createWriteStream(resultFilePath, { flags: "a+" });
 
   if (!isResultFileExisted) {
-    writableStream.write(["id", "wallet_address", "tx_sig"].toString() + "\n");
+    writableStream.write(["id", "email", "wallet_address", "prop_reward_amount", "tx_sig"].toString() + "\n");
   }
 
   const fileData: {
     id: number;
+    email: string;
     wallet_address: string;
     prop_reward_amount: number;
   }[] = [];
@@ -91,12 +93,14 @@ const main = async () => {
     "data",
     async (data: {
       id: number;
+      email: string;
       wallet_address: string;
       prop_reward_amount: number;
     }) => {
       if (data.prop_reward_amount == 0 || !data.wallet_address) return;
       fileData.push({
         id: data.id,
+        email: data.email,
         wallet_address: data.wallet_address,
         prop_reward_amount: data.prop_reward_amount,
       });
@@ -124,12 +128,14 @@ const main = async () => {
       );
 
       writableStream.write(
-        [data.id, data.wallet_address, txSig].toString() + "\n"
+        [data.id, data.email, data.wallet_address, data.prop_reward_amount, txSig].toString() + "\n"
       );
 
       console.log("Success transfer with ", {
         id: data.id,
+        email: data.email,
         wallet: data.wallet_address,
+        prop_reward_amount: data.prop_reward_amount,
         txSig,
       });
     }
@@ -190,7 +196,10 @@ const transferToken = async (
     )
   );
 
-  const txSig = await connection.sendTransaction(tx, [payer]);
+  tx.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash;
+  tx.feePayer = payer.publicKey;
+  console.log(getTxSize(tx, payer.publicKey))
+  const txSig = await sendAndConfirmTransaction(connection, tx, [payer]);
 
   return txSig;
 };
