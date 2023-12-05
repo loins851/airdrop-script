@@ -69,16 +69,12 @@ const main = async () => {
       true
     );
 
-  const filePath =
-    process.cwd() +
-    "/data/propeasy/batch2_remain_user - batch2_remain_user.csv";
+  const filePath = process.cwd() + "/data/propeasy/top_referrers.csv";
   const readableStream = fs.createReadStream(filePath);
   const parser = csvParser();
   readableStream.pipe(parser);
 
-  const resultFilePath =
-    process.cwd() +
-    "/data/Result_batch2_remain_user - batch2_remain_user_testnet.csv";
+  const resultFilePath = process.cwd() + "/data/Result-top_referrers.csv";
   let isResultFileExisted = true;
   if (!fs.existsSync(resultFilePath)) {
     isResultFileExisted = false;
@@ -86,41 +82,19 @@ const main = async () => {
   const writableStream = fs.createWriteStream(resultFilePath, { flags: "a+" });
 
   if (!isResultFileExisted) {
-    writableStream.write(
-      [
-        "id",
-        "email",
-        "wallet_address",
-        "prop_reward_amount",
-        "tx_sig",
-      ].toString() + "\n"
-    );
+    writableStream.write(["wallet_address", "tx_sig"].toString() + "\n");
   }
 
   const fileData: {
-    id: number;
-    email: string;
     wallet_address: string;
-    prop_reward_amount: number;
   }[] = [];
 
-  parser.on(
-    "data",
-    async (data: {
-      id: number;
-      email: string;
-      wallet_address: string;
-      prop_reward_amount: number;
-    }) => {
-      if (data.prop_reward_amount == 0 || !data.wallet_address) return;
-      fileData.push({
-        id: data.id,
-        email: data.email,
-        wallet_address: data.wallet_address,
-        prop_reward_amount: data.prop_reward_amount,
-      });
-    }
-  );
+  parser.on("data", async (data: { wallet_address: string }) => {
+    if (!data.wallet_address) return;
+    fileData.push({
+      wallet_address: data.wallet_address,
+    });
+  });
   parser.on("end", async () => {
     const batchSize = 10;
     for (let i = 0; i < fileData.length; i += batchSize) {
@@ -130,15 +104,11 @@ const main = async () => {
 
       for (let j = 0; j < batchData.length; j++) {
         let data = batchData[j];
-        const uiAmount = new u64(
-          Math.round(data.prop_reward_amount).toString()
-        );
+        const uiAmount = new u64("10");
         const amount = uiAmount.mul(new BN(10).pow(new BN(decimals)));
 
         console.log("Processing with ", {
-          id: data.id,
           wallet_address: data.wallet_address,
-          prop_reward_amount: data.prop_reward_amount,
         });
 
         const receiver = new PublicKey(data.wallet_address);
@@ -190,21 +160,10 @@ const main = async () => {
 
       for (let j = 0; j < batchData.length; j++) {
         let data = batchData[j];
-        writableStream.write(
-          [
-            data.id,
-            data.email,
-            data.wallet_address,
-            data.prop_reward_amount,
-            txSig,
-          ].toString() + "\n"
-        );
+        writableStream.write([data.wallet_address, txSig].toString() + "\n");
 
         console.log("Success transfer with ", {
-          id: data.id,
-          email: data.email,
           wallet: data.wallet_address,
-          prop_reward_amount: data.prop_reward_amount,
           txSig,
         });
       }

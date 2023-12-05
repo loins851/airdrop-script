@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const main = async () => {
   const publicKey = new PublicKey(
-    "B2oin3cWWRVd3sLnpp6i4Es2Kphn4gZBAEZRbGFU52Ws"
+    ""
   );
 
   const rpcEndpoint =

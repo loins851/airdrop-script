@@ -19,7 +19,7 @@ const main = async () => {
 
   const mintTokenAccount = new PublicKey(
     process.env.MINT_TOKEN_ACCOUNT ||
-      "GRwYPgoBDGqoCCKdfG141RiFUXnxsCCMDTx5irXXfdXm"
+      ""
   );
   const receiver = Keypair.generate();
 

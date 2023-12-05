@@ -2,7 +2,13 @@ import csvParser from "csv-parser";
 import fs from "fs";
 import process from "process";
 
-import { Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  Transaction,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
 
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -46,10 +52,7 @@ const main = async () => {
   );
 
   // reUSD or PROP
-  const mintTokenAccount = new PublicKey(
-    process.env.MINT_TOKEN_ACCOUNT ||
-      "GRwYPgoBDGqoCCKdfG141RiFUXnxsCCMDTx5irXXfdXm"
-  );
+  const mintTokenAccount = new PublicKey(process.env.MINT_TOKEN_ACCOUNT || "");
   const mintTokenInfo = await connection.getParsedAccountInfo(mintTokenAccount);
   if (mintTokenInfo.value == null) return;
   const decimals = (mintTokenInfo.value.data as any).parsed.info.decimals;
@@ -79,7 +82,15 @@ const main = async () => {
   const writableStream = fs.createWriteStream(resultFilePath, { flags: "a+" });
 
   if (!isResultFileExisted) {
-    writableStream.write(["id", "email", "wallet_address", "prop_reward_amount", "tx_sig"].toString() + "\n");
+    writableStream.write(
+      [
+        "id",
+        "email",
+        "wallet_address",
+        "prop_reward_amount",
+        "tx_sig",
+      ].toString() + "\n"
+    );
   }
 
   const fileData: {
@@ -128,7 +139,13 @@ const main = async () => {
       );
 
       writableStream.write(
-        [data.id, data.email, data.wallet_address, data.prop_reward_amount, txSig].toString() + "\n"
+        [
+          data.id,
+          data.email,
+          data.wallet_address,
+          data.prop_reward_amount,
+          txSig,
+        ].toString() + "\n"
       );
 
       console.log("Success transfer with ", {
@@ -196,9 +213,11 @@ const transferToken = async (
     )
   );
 
-  tx.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash;
+  tx.recentBlockhash = (
+    await connection.getLatestBlockhash("finalized")
+  ).blockhash;
   tx.feePayer = payer.publicKey;
-  console.log(getTxSize(tx, payer.publicKey))
+  console.log(getTxSize(tx, payer.publicKey));
   const txSig = await sendAndConfirmTransaction(connection, tx, [payer]);
 
   return txSig;

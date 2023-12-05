@@ -45,10 +45,7 @@ const main = async () => {
   );
 
   // reUSD or PROP
-  const mintTokenAccount = new PublicKey(
-    process.env.MINT_TOKEN_ACCOUNT ||
-      "GRwYPgoBDGqoCCKdfG141RiFUXnxsCCMDTx5irXXfdXm"
-  );
+  const mintTokenAccount = new PublicKey(process.env.MINT_TOKEN_ACCOUNT || "");
   const mintTokenInfo = await connection.getParsedAccountInfo(mintTokenAccount);
   if (mintTokenInfo.value == null) return;
   const decimals = (mintTokenInfo.value.data as any).parsed.info.decimals;
@@ -97,12 +94,12 @@ const main = async () => {
       let data = fileData[i];
       const uiAmount = new u64("10");
       const amount = uiAmount.mul(new BN(10).pow(new BN(decimals)));
-  
+
       console.log("Processing with ", {
         id: data.id,
         wallet_address: data.wallet_address,
       });
-      
+
       const txSig = await transferToken(
         connection,
         new PublicKey(data.wallet_address),
@@ -111,18 +108,18 @@ const main = async () => {
         distributorAssociatedTokenAccount,
         new u64(amount.toString())
       );
-  
+
       writableStream.write(
         [data.id, data.wallet_address, txSig].toString() + "\n"
       );
-  
+
       console.log("Success transfer with ", {
         id: data.id,
         wallet: data.wallet_address,
         txSig,
       });
     }
-  })
+  });
   parser.on("error", (error) => {
     console.error("Error reading CSV file:", error);
   });

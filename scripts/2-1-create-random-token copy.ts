@@ -27,8 +27,6 @@ const main = async () => {
   console.log(mint.publicKey.toBuffer());
   console.log(mint.publicKey.toBytes());
   console.log(mint.publicKey.toString());
-
-  // GRwYPgoBDGqoCCKdfG141RiFUXnxsCCMDTx5irXXfdXm
 };
 
 try {
