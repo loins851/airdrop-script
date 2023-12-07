@@ -29,7 +29,7 @@ const main = async () => {
   if (mintTokenInfo.value == null) return;
   const decimals = (mintTokenInfo.value.data as any).parsed.info.decimals;
 
-  const receiver = payer.publicKey;
+  const receiver = new PublicKey('');
 
   const associatedTokenAccount = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,

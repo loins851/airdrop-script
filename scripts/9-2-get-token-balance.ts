@@ -13,6 +13,8 @@ import {
   u64,
 } from "@solana/spl-token";
 
+require("dotenv").config();
+
 const main = async () => {
   const rpcEndpoint =
     process.env.RPC_ENDPOINT || "https://api-testnet.renec.foundation:8899"; // https://api-mainnet-beta.renec.foundation:8899

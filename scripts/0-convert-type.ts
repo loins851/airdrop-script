@@ -7,12 +7,15 @@ const main = async () => {
 
   const secretKey = bs58.decode(secretKeyBase58);
 
+  // const secretKeyBase58Clone = bs58.encode([]);
   const secretKeyBase58Clone = bs58.encode(secretKey);
 
   const payer = Keypair.fromSecretKey(secretKey);
+  // const payer = Keypair.fromSecretKey(new Uint8Array([]));
 
   console.log({ secretKey });
   console.log({ secretKeyBase58Clone });
+  console.log(payer.publicKey);
   console.log(payer);
 };
 
