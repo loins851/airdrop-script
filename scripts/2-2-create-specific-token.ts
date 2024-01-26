@@ -3,7 +3,7 @@ import {
   Keypair,
   Transaction,
   SystemProgram,
-  sendAndConfirmTransaction
+  sendAndConfirmTransaction,
 } from "@solana/web3.js";
 
 import { Token, TOKEN_PROGRAM_ID, MintLayout } from "@solana/spl-token";
@@ -34,16 +34,25 @@ const main = async () => {
       lamports,
       newAccountPubkey: mintKeypair.publicKey,
       programId: TOKEN_PROGRAM_ID,
-      space: MintLayout.span
+      space: MintLayout.span,
     })
   );
 
   tx.add(
-    Token.createInitMintInstruction(TOKEN_PROGRAM_ID, mintKeypair.publicKey, decimals, payer.publicKey, null)
-  )
+    Token.createInitMintInstruction(
+      TOKEN_PROGRAM_ID,
+      mintKeypair.publicKey,
+      decimals,
+      payer.publicKey,
+      null
+    )
+  );
 
-  const txSig = await sendAndConfirmTransaction(connection, tx, [payer, mintKeypair])
-  console.log(mintKeypair.publicKey)
+  const txSig = await sendAndConfirmTransaction(connection, tx, [
+    payer,
+    mintKeypair,
+  ]);
+  console.log(mintKeypair.publicKey);
 };
 
 try {

@@ -21,13 +21,9 @@ const main = async () => {
     process.env.RPC_ENDPOINT || "https://api-testnet.renec.foundation:8899"; // https://api-mainnet-beta.renec.foundation:8899
   const connection = new Connection(rpcEndpoint, "confirmed");
 
-  const publicKey = new PublicKey(
-    ""
-  );
+  const publicKey = new PublicKey("");
 
-  const wallet = new Wallet(
-    Keypair.generate()
-  );
+  const wallet = new Wallet(Keypair.generate());
   const provider = new AnchorProvider(connection, wallet, {
     commitment: "confirmed",
   });
@@ -39,7 +35,6 @@ const main = async () => {
   const providerClient = await ProviderClient.getClient(ctx);
 
   console.log(await providerClient.getCurrentUserKyc(publicKey));
-
 };
 
 try {

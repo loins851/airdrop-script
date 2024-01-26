@@ -12,13 +12,12 @@ import {
   TOKEN_PROGRAM_ID,
   u64,
   AccountLayout,
-  MintLayout
+  MintLayout,
 } from "@solana/spl-token";
 
 require("dotenv").config();
 
 const main = async () => {
-
   const rpcEndpoint =
     process.env.RPC_ENDPOINT || "https://api-testnet.renec.foundation:8899"; // https://api-mainnet-beta.renec.foundation:8899
   const connection = new Connection(rpcEndpoint, "confirmed");
@@ -42,32 +41,40 @@ const main = async () => {
       ],
     }
   );
-  console.log(accounts[0].account.data)
+  console.log(accounts[0].account.data);
+  console.log((accounts[0].account.data as any).parsed.info.tokenAmount);
   console.log("Length: ", accounts.length);
-
-  const accounts2 = await connection.getProgramAccounts(
-    TOKEN_PROGRAM_ID, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
-    {
-      dataSlice: {
-        offset: 0, // number of bytes
-        length: 0, // number of bytes
-      },
-      filters: [
-        {
-          dataSize: 165, // number of bytes
-        },
-        {
-          memcmp: {
-            offset: 0, // number of bytes
-            bytes: mintTokenAccount.toBase58(), // base58 encoded string
-          },
-        },
-      ],
+  let accountHaveBalanceCnt = 0;
+  accounts.forEach((element) => {
+    if ((element.account.data as any).parsed.info.tokenAmount.uiAmount > 0) {
+      accountHaveBalanceCnt += 1;
     }
-  );
-  console.log(accounts2[0].account.data);
-  console.log(JSON.stringify(accounts2[0].account.data));
-  console.log("Length: ", accounts2.length);
+  });
+
+  console.log({ accountHaveBalanceCnt });
+  // const accounts2 = await connection.getProgramAccounts(
+  //   TOKEN_PROGRAM_ID, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
+  //   {
+  //     dataSlice: {
+  //       offset: 0, // number of bytes
+  //       length: 0, // number of bytes
+  //     },
+  //     filters: [
+  //       {
+  //         dataSize: 165, // number of bytes
+  //       },
+  //       {
+  //         memcmp: {
+  //           offset: 0, // number of bytes
+  //           bytes: mintTokenAccount.toBase58(), // base58 encoded string
+  //         },
+  //       },
+  //     ],
+  //   }
+  // );
+  // console.log(accounts2[0].account.data);
+  // console.log(JSON.stringify(accounts2[0].account.data));
+  // console.log("Length: ", accounts2.length);
 };
 
 try {

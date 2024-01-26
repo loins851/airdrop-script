@@ -41,6 +41,16 @@
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.2.tgz#6f26dbc8fbc7205873ce3cee2f690eba0d421b39"
   integrity sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==
 
+"@orca-so/common-sdk@0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@orca-so/common-sdk/-/common-sdk-0.1.11.tgz#4b43dbd19216e72abe7d30643619a96965ed96b1"
+  integrity sha512-fk07IyQXtqhYWVjadiXb3DDheEQQDKpK6fmwxA/1xpzRp6cNhZ8tTwmFfXOfJedKiPWgJbI6NU/VIFKPbBVxnA==
+  dependencies:
+    "@project-serum/anchor" "~0.25.0"
+    "@solana/spl-token" "0.1.8"
+    decimal.js "^10.3.1"
+    tiny-invariant "^1.2.0"
+
 "@orca-so/common-sdk@0.1.9":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@orca-so/common-sdk/-/common-sdk-0.1.9.tgz#d55d843e5a5c2b2a21ea22a1bdb2c0d2f24524e3"
@@ -196,6 +206,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/lodash@^4.14.191":
+  version "4.14.202"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.202.tgz#f09dbd2fb082d507178b2f2a5c7e74bd72ff98f8"
+  integrity sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==
+
 "@types/node@*":
   version "20.9.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.9.2.tgz#002815c8e87fe0c9369121c78b52e800fadc0ac6"
@@ -272,7 +287,7 @@ bigint-buffer@^1.1.5:
   dependencies:
     bindings "^1.3.0"
 
-bignumber.js@^9.0.1:
+bignumber.js@^9.0.1, bignumber.js@^9.1.2:
   version "9.1.2"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.1.2.tgz#b7c4242259c008903b13707983b5f4bbd31eda0c"
   integrity sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==
@@ -726,6 +741,21 @@ prettier@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.1.0.tgz#c6d16474a5f764ea1a4a373c593b779697744d5e"
   integrity sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==
+
+propeasy-sdk@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/propeasy-sdk/-/propeasy-sdk-0.4.3.tgz#eabb73525c5160ba2e172b0217e0e15c644ba371"
+  integrity sha512-Y0K87Jizqgiw+rqs3ffVsIuR0curmygGtuhpuY7fvsGS86dRyB9+9pPIKgsdQMH1MFhfAIRDcGZuzc1e6UD6VQ==
+  dependencies:
+    "@orca-so/common-sdk" "0.1.11"
+    "@project-serum/anchor" "0.26.0"
+    "@solana/spl-token" "0.1.8"
+    "@types/lodash" "^4.14.191"
+    bignumber.js "^9.1.2"
+    commander "^11.0.0"
+    decimal.js "^10.3.1"
+    figlet "^1.6.0"
+    tiny-invariant "^1.3.1"
 
 ps-tree@1.2.0:
   version "1.2.0"

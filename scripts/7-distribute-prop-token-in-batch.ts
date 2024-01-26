@@ -69,16 +69,12 @@ const main = async () => {
       true
     );
 
-  const filePath =
-    process.cwd() +
-    "/data/propeasy/batch2_remain_user - batch2_remain_user.csv";
+  const filePath = process.cwd() + "/data/propeasy/Rendemy user - Sheet1.csv";
   const readableStream = fs.createReadStream(filePath);
   const parser = csvParser();
   readableStream.pipe(parser);
 
-  const resultFilePath =
-    process.cwd() +
-    "/data/Result_batch2_remain_user - batch2_remain_user_testnet.csv";
+  const resultFilePath = process.cwd() + "/data/Result_Rendemy user - Sheet1.csv";
   let isResultFileExisted = true;
   if (!fs.existsSync(resultFilePath)) {
     isResultFileExisted = false;

@@ -4,8 +4,10 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID,
+  u64,
 } from "@solana/spl-token";
 import * as bs58 from "bs58";
+import BN from "bn.js";
 require("dotenv").config();
 
 const main = async () => {
@@ -17,11 +19,8 @@ const main = async () => {
     process.env.RPC_ENDPOINT || "https://api-testnet.renec.foundation:8899"; // https://api-mainnet-beta.renec.foundation:8899
   const connection = new Connection(rpcEndpoint, "confirmed");
 
-  const mintTokenAccount = new PublicKey(
-    process.env.MINT_TOKEN_ACCOUNT ||
-      ""
-  );
-  const receiver = Keypair.generate();
+  const mintTokenAccount = new PublicKey(process.env.MINT_TOKEN_ACCOUNT || "");
+  const receiver = new PublicKey("");
 
   const payerAssociatedTokenAccount = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -35,7 +34,7 @@ const main = async () => {
     ASSOCIATED_TOKEN_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
     mintTokenAccount,
-    receiver.publicKey,
+    receiver,
     true
   );
 
@@ -43,7 +42,6 @@ const main = async () => {
     receiverAssociatedTokenAccount,
     "confirmed"
   );
-  console.log(account);
   const tx = new Transaction();
 
   if (account == null) {
@@ -53,12 +51,14 @@ const main = async () => {
         TOKEN_PROGRAM_ID,
         mintTokenAccount,
         receiverAssociatedTokenAccount,
-        receiver.publicKey,
+        receiver,
         payer.publicKey
       )
     );
   }
 
+  const uiAmount = new u64(20000000);
+  const amount = uiAmount.mul(new BN(10).pow(new BN(9)));
   tx.add(
     Token.createTransferInstruction(
       TOKEN_PROGRAM_ID,
@@ -66,13 +66,13 @@ const main = async () => {
       receiverAssociatedTokenAccount,
       payer.publicKey,
       [],
-      10
+      new u64(amount.toString())
     )
   );
 
   const txSig = await connection.sendTransaction(tx, [payer]);
 
-  console.log(receiver.publicKey);
+  console.log(receiver);
   console.log(receiverAssociatedTokenAccount);
   console.log({ txSig });
 };

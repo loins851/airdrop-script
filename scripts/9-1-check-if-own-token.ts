@@ -18,14 +18,11 @@ const main = async () => {
   const connection = new Connection(rpcEndpoint, "confirmed");
 
   // reUSD or PROP
-  const mintTokenAccount = new PublicKey(
-    process.env.MINT_TOKEN_ACCOUNT ||
-      ""
-  );
+  const mintTokenAccount = new PublicKey(process.env.MINT_TOKEN_ACCOUNT || "");
   const mintTokenInfo = await connection.getParsedAccountInfo(mintTokenAccount);
   if (mintTokenInfo.value == null) return;
 
-  const filePath = process.cwd() + "/data/propeasy/batch2_remain_user - batch2_remain_user.csv";
+  const filePath = process.cwd() + "/data/propeasy/batch_3_prop_reward.csv";
   const readableStream = fs.createReadStream(filePath);
   const parser = csvParser();
   readableStream.pipe(parser);
@@ -43,7 +40,7 @@ const main = async () => {
       wallet_address: string;
       airdrop_before: string;
     }) => {
-      if (!data.wallet_address || data.wallet_address == '0') return;
+      if (!data.wallet_address || data.wallet_address == "0") return;
       fileData.push({
         email: data.email,
         wallet_address: data.wallet_address,
@@ -51,7 +48,7 @@ const main = async () => {
       });
     }
   );
-
+  let cnt = 0;
   parser.on("end", async () => {
     for (let i = 0; i < fileData.length; i += 1) {
       if (fileData[i].airdrop_before == "TRUE") {
@@ -70,11 +67,11 @@ const main = async () => {
       if (tokenAccounts.value.length > 0) {
         console.log(i, fileData[i].email, fileData[i].wallet_address);
         console.log(tokenAccounts);
-
+        cnt += 1;
+        console.log({ cnt });
         // const signatures = await connection.getSignaturesForAddress(tokenAddress, {
         //   limit: 1000, // Adjust the limit to fetch more transactions
         // });
-
       } else {
         console.log(i);
       }

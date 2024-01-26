@@ -21,10 +21,7 @@ const main = async () => {
   const connection = new Connection(rpcEndpoint, "confirmed");
 
   // reUSD or PROP
-  const mintTokenAccount = new PublicKey(
-    process.env.MINT_TOKEN_ACCOUNT ||
-    ""
-  );
+  const mintTokenAccount = new PublicKey(process.env.MINT_TOKEN_ACCOUNT || "");
 
   const owner = new PublicKey("");
 
@@ -37,35 +34,37 @@ const main = async () => {
   );
 
   let balanceInfo: {
-    amount: string,
-    uiAmount: number,
-    uiAmountString: string
-  }
+    amount: string;
+    uiAmount: number;
+    uiAmountString: string;
+  };
   try {
-    const ataBalanceInfo = await connection.getTokenAccountBalance(ata)
+    const ataBalanceInfo = await connection.getTokenAccountBalance(ata);
 
     balanceInfo = {
       amount: ataBalanceInfo.value.amount,
       uiAmount: ataBalanceInfo.value.uiAmount || 0,
-      uiAmountString: ataBalanceInfo.value.uiAmountString || '0'
-    }
+      uiAmountString: ataBalanceInfo.value.uiAmountString || "0",
+    };
   } catch (error) {
     balanceInfo = {
-      amount: '0',
+      amount: "0",
       uiAmount: 0,
-      uiAmountString: '0'
-    }
+      uiAmountString: "0",
+    };
   }
-  console.log({balanceInfo})
+  console.log({ balanceInfo });
 
-  console.log(await connection.getTokenAccountsByOwner(owner, {
-    mint: mintTokenAccount,
-    programId: TOKEN_PROGRAM_ID
-  }))
+  console.log(
+    await connection.getTokenAccountsByOwner(owner, {
+      mint: mintTokenAccount,
+      programId: TOKEN_PROGRAM_ID,
+    })
+  );
 
-  console.log(await connection.getTokenAccountBalance(new PublicKey('')))
+  console.log(await connection.getTokenAccountBalance(new PublicKey("")));
 
-  console.log(await connection.getBalance(owner))
+  console.log(await connection.getBalance(owner));
 };
 
 try {

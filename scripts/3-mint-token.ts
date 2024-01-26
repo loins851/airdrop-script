@@ -29,7 +29,8 @@ const main = async () => {
   if (mintTokenInfo.value == null) return;
   const decimals = (mintTokenInfo.value.data as any).parsed.info.decimals;
 
-  const receiver = new PublicKey('');
+  const receiver = payer.publicKey;
+  // const receiver = new PublicKey('');
 
   const associatedTokenAccount = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -43,7 +44,6 @@ const main = async () => {
     associatedTokenAccount,
     "confirmed"
   );
-  console.log(account);
   const tx = new Transaction();
 
   if (account == null) {
@@ -71,11 +71,8 @@ const main = async () => {
     )
   );
 
-  console.log(getTxSize(tx, payer.publicKey))
-
   const txSig = await connection.sendTransaction(tx, [payer]);
 
-  console.log(associatedTokenAccount);
   console.log({ txSig });
 };
 

@@ -1,33 +1,32 @@
-import { Connection, Keypair, PublicKey, Transaction, SystemProgram } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+} from "@solana/web3.js";
 
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID,
-  AccountLayout
+  AccountLayout,
 } from "@solana/spl-token";
 import * as bs58 from "bs58";
 require("dotenv").config();
 
 const main = async () => {
   const payer = Keypair.fromSecretKey(
-    bs58.decode(
-      process.env.PRIVATE_KEY_BASE58 ||
-      ""
-    )
+    bs58.decode(process.env.PRIVATE_KEY_BASE58 || "")
   );
 
   const rpcEndpoint =
     process.env.RPC_ENDPOINT || "https://api-testnet.renec.foundation:8899"; // https://api-mainnet-beta.renec.foundation:8899
   const connection = new Connection(rpcEndpoint, "confirmed");
 
-  const mintTokenAccount = new PublicKey(
-    process.env.MINT_TOKEN_ACCOUNT ||
-    ""
-  );
-  // const receiver = Keypair.generate();
+  const mintTokenAccount = new PublicKey(process.env.MINT_TOKEN_ACCOUNT || "");
 
-  const receiverPublickey = new PublicKey('')
+  const receiverPublickey = new PublicKey("");
 
   const payerAssociatedTokenAccount = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -42,9 +41,7 @@ const main = async () => {
   const tx = new Transaction();
 
   const lamportsForTokenAccount =
-    await connection.getMinimumBalanceForRentExemption(
-      AccountLayout.span
-    );
+    await connection.getMinimumBalanceForRentExemption(AccountLayout.span);
 
   tx.add(
     SystemProgram.createAccount({
@@ -52,7 +49,7 @@ const main = async () => {
       lamports: lamportsForTokenAccount,
       newAccountPubkey: receiverTokenAccount.publicKey,
       programId: TOKEN_PROGRAM_ID,
-      space: AccountLayout.span
+      space: AccountLayout.span,
     }),
 
     Token.createInitAccountInstruction(
@@ -70,7 +67,7 @@ const main = async () => {
       [],
       200000000
     )
-  )
+  );
 
   const txSig = await connection.sendTransaction(tx, [
     payer,

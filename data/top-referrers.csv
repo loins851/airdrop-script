@@ -1,8 +1,0 @@
-id,email,referrer_id,referrer_email,referee_count,referee_count_with_verified_email,created_at,referee_email_domain_count,wallet_address,location,prop_reward_amount,survey_created_at,survey_response_expected_apy,survey_response_investment_amount,survey_response_currency,survey_response_comment
-10,loins+80@remitano.com,8,loins+73@remitano.com,0,0,2023-11-13 18:14:27 +0700,{},8cZxFxq9cJCNiLeruUUfoweBvEqXdHk4hPckvsMGX7RF,VN,1.0,,,,,
-11,loins+81@remitano.com,,,0,0,2023-11-13 22:50:52 +0700,{},8cZxFxq9cJCNiLeruUUfoweBvEqXdHk4hPckvsMGX7RF,,0.0,,,,,
-12,loins+82@remitano.com,,,0,0,2023-11-13 23:04:52 +0700,{},8cZxFxq9cJCNiLeruUUfoweBvEqXdHk4hPckvsMGX7RF,VN,0.0,,,,,
-13,loins+83@remitano.com,,,3,3,2023-11-14 20:26:06 +0700,"{""remitano.com""=>3}",8cZxFxq9cJCNiLeruUUfoweBvEqXdHk4hPckvsMGX7RF,,10.0,,,,,
-14,loins+84@remitano.com,13,loins+83@remitano.com,0,0,2023-11-14 20:27:30 +0700,{},8cZxFxq9cJCNiLeruUUfoweBvEqXdHk4hPckvsMGX7RF,,1.0,,,,,
-15,loins+85@remitano.com,13,loins+83@remitano.com,0,0,2023-11-15 00:33:27 +0700,{},8cZxFxq9cJCNiLeruUUfoweBvEqXdHk4hPckvsMGX7RF,,1.0,,,,,
-16,loins+86@remitano.com,13,loins+83@remitano.com,0,0,2023-11-15 00:56:03 +0700,{},8cZxFxq9cJCNiLeruUUfoweBvEqXdHk4hPckvsMGX7RF,,1.0,,,,,
