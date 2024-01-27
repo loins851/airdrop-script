@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "cli": "node ./dist/cli/cli.js",
+    "build:cli": "cd cli && npm run build",
+    "build": "tsc -p cli"
+  },
   "dependencies": {
     "@project-serum/anchor": "^0.26.0",
     "@renec-foundation/kyc-sdk": "^0.1.4",
@@ -10,11 +15,16 @@
     "bignumber.js": "^9.1.2",
     "bn.js": "^5.2.1",
     "bs58": "^5.0.0",
+    "commander": "^11.1.0",
     "csv-parser": "^3.0.0",
     "dotenv": "^16.3.1",
-    "propeasy-sdk": "^0.4.3"
+    "figlet": "^1.7.0",
+    "fs": "^0.0.1-security",
+    "propeasy-sdk": "^0.4.3",
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
-    "@types/bn.js": "^5.1.5"
+    "@types/bn.js": "^5.1.5",
+    "@types/figlet": "^1.5.8"
   }
 }

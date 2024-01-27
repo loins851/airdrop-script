@@ -1,0 +1,13 @@
+{
+    "extends": "../tsconfig-base.json",
+    "compilerOptions": {
+      "composite": true,
+      "rootDir": "../"
+    },
+    "include": ["./**/*", "./artifacts/**/*.json", "./.wallets/*.json", "./data/*.json", "../utils/*.ts"],
+    "typedocOptions": {
+      "entryPoints": ["index.ts"],
+      "out": "../../docs"
+    }
+  }
+  
