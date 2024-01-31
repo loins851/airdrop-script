@@ -11,6 +11,8 @@ import { transferTokenToATA } from "./4-1-transfer-token-to-ATA";
 import { transferTokenToNonATA } from "./4-2-transfer-token-to-non-ATA";
 import { distributeTokenInBatch } from "./7-distribute-token-in-batch";
 import { convertKeyPairFromBs58Type } from "./0-2-convert-keypair-from-bs58-type";
+import { countTxRelateToPropeasy } from "./14-count-tx-relate-to-propeasy";
+import { countTokenHolders } from "./9-3-count-token-holders";
 
 const __path = process.cwd();
 const program = new Command();
@@ -231,6 +233,51 @@ program
       rpc,
       new PublicKey(token),
       inputFilePath,
+      resultFilePath
+    );
+  });
+
+// yarn build:cli && yarn cli 9-3-count-token-holders -n mainnet -t {}
+program
+  .command("9-3-count-token-holders")
+  .description("9-3-count-token-holders")
+  .option(
+    "-n, --network <string>",
+    "Network: mainnet, testnet, localnet",
+    "testnet"
+  )
+  .option("-t, --token <string>", "Token address")
+  .action(async (params) => {
+    let { network, token } = params;
+
+    const rpc = getRpc(network);
+    await countTokenHolders(rpc, new PublicKey(token));
+  });
+
+// yarn build:cli && yarn cli 14-count-tx-relate-to-propeasy -n mainnet --programId {} --resultFileRelativePath {""}
+program
+  .command("14-count-tx-relate-to-propeasy")
+  .description("14-count-tx-relate-to-propeasy")
+  .option(
+    "-n, --network <string>",
+    "Network: mainnet, testnet, localnet",
+    "testnet"
+  )
+  .option("--programId <string>", "Propeasy program id")
+  .option(
+    "--resultFileRelativePath <string>",
+    "Result file relative path",
+    "/data/result.csv"
+  )
+  .action(async (params) => {
+    let { network, programId, resultFileRelativePath } = params;
+    const resultFilePath =
+      resultFileRelativePath != "" ? __path + resultFileRelativePath : "";
+
+    const rpc = getRpc(network);
+    await countTxRelateToPropeasy(
+      new PublicKey(programId),
+      rpc,
       resultFilePath
     );
   });
