@@ -66,110 +66,108 @@ export const countTxRelateToPropeasy = async (
     txSigInfosCnt += txSigInfos.length;
     console.log({ txSigInfosCntTmp: txSigInfosCnt });
 
-    for (const [idx, txSigInfo] of txSigInfos.entries()) {
-      const tx = await connection.getParsedTransaction(
-        txSigInfo.signature,
-        "finalized"
-      );
+    // for (const [idx, txSigInfo] of txSigInfos.entries()) {
+    //   const tx = await connection.getParsedTransaction(
+    //     txSigInfo.signature,
+    //     "finalized"
+    //   );
 
-      console.log("processing with", idx, txSigInfo.signature);
+    //   console.log("processing with", idx, txSigInfo.signature);
 
-      if (tx?.meta?.err) {
-        txTypeCnt.error += 1;
-        console.log(tx.meta.logMessages);
-      } else {
-        if (tx?.meta?.logMessages) {
-          const eventLog = getEventLog(tx.meta.logMessages, programId);
-          if (
-            checkTxType(tx.meta.logMessages) == "PurchasePropertyToken" &&
-            eventLog != ""
-          ) {
-            const decodedEventLog = eventCoder.decode(eventLog) as any;
-            // console.log("Processing:", decodedEventLog);
-            const purchasedTimestamp =
-              decodedEventLog.data.purchasedTimestamp.toNumber();
-            const publicSaleStartTime = 1704963600;
-            const publicSaleEndTime = 1705568400;
-            if (
-              purchasedTimestamp < publicSaleStartTime ||
-              purchasedTimestamp > publicSaleEndTime
-            ) {
-              continue;
-            }
-            const user = decodedEventLog.data.user;
-            // if (!userPurchasedExisted.has(user.toBase58())) {
-            //   uniqueUserPurchasedCnt += 1;
-            //   userPurchasedExisted.set(user.toBase58(), true);
-            // }
-            // console.log(decodedEventLog);
-            const individualCommissionAmount = new BigNumber(
-              decodedEventLog.data.individualCommissionAmount.toString()
-            )
-              .div(new BigNumber(10).pow(9))
-              .toNumber();
+    //   if (tx?.meta?.err) {
+    //     txTypeCnt.error += 1;
+    //     console.log(tx.meta.logMessages);
+    //   } else {
+    //     if (tx?.meta?.logMessages) {
+    //       const eventLog = getEventLog(tx.meta.logMessages, programId);
+    //       if (
+    //         checkTxType(tx.meta.logMessages) == "PurchasePropertyToken" &&
+    //         eventLog != ""
+    //       ) {
+    //         const decodedEventLog = eventCoder.decode(eventLog) as any;
+    //         // console.log("Processing:", decodedEventLog);
+    //         const purchasedTimestamp =
+    //           decodedEventLog.data.purchasedTimestamp.toNumber();
+    //         const publicSaleStartTime = 1704963600;
+    //         const publicSaleEndTime = 1705568400;
+    //         if (
+    //           purchasedTimestamp < publicSaleStartTime ||
+    //           purchasedTimestamp > publicSaleEndTime
+    //         ) {
+    //           continue;
+    //         }
+    //         const user = decodedEventLog.data.user;
+    //         // if (!userPurchasedExisted.has(user.toBase58())) {
+    //         //   uniqueUserPurchasedCnt += 1;
+    //         //   userPurchasedExisted.set(user.toBase58(), true);
+    //         // }
+    //         // console.log(decodedEventLog);
+    //         const individualCommissionAmount = new BigNumber(
+    //           decodedEventLog.data.individualCommissionAmount.toString()
+    //         )
+    //           .div(new BigNumber(10).pow(9))
+    //           .toNumber();
 
-            let totalCommissionAmountInTx = 0;
-            if (decodedEventLog.data.referrer == null) {
-              totalCommissionAmountInTx = individualCommissionAmount;
-            } else {
-              totalCommissionAmountInTx = individualCommissionAmount * 2;
-            }
+    //         let totalCommissionAmountInTx = 0;
+    //         if (decodedEventLog.data.referrer == null) {
+    //           totalCommissionAmountInTx = individualCommissionAmount;
+    //         } else {
+    //           totalCommissionAmountInTx = individualCommissionAmount * 2;
+    //         }
 
-            totalCommissionAmount += totalCommissionAmountInTx;
+    //         totalCommissionAmount += totalCommissionAmountInTx;
 
-            const tokenPrice = new BigNumber(
-              decodedEventLog.data.tokenPrice.toString()
-            )
-              .div(new BigNumber(10).pow(9))
-              .toNumber();
+    //         const tokenPrice = new BigNumber(
+    //           decodedEventLog.data.tokenPrice.toString()
+    //         )
+    //           .div(new BigNumber(10).pow(9))
+    //           .toNumber();
 
-            const purchasedAmount = new BigNumber(
-              decodedEventLog.data.purchasedAmount.toString()
-            )
-              .div(new BigNumber(10).pow(9))
-              .toNumber();
+    //         const purchasedAmount = new BigNumber(
+    //           decodedEventLog.data.purchasedAmount.toString()
+    //         )
+    //           .div(new BigNumber(10).pow(9))
+    //           .toNumber();
 
-            const propertyAmount = new BigNumber(
-              decodedEventLog.data.propertyAmount.toString()
-            )
-              .div(new BigNumber(10).pow(9))
-              .toNumber();
+    //         const propertyAmount = new BigNumber(
+    //           decodedEventLog.data.propertyAmount.toString()
+    //         )
+    //           .div(new BigNumber(10).pow(9))
+    //           .toNumber();
 
-            // writableStream.write(
-            //   [
-            //     user,
-            //     decodedEventLog.data.propertyState,
-            //     decodedEventLog.data.propertyMintAccount,
-            //     tokenPrice,
-            //     decodedEventLog.data.saleType,
-            //     purchasedAmount,
-            //     propertyAmount,
-            //     decodedEventLog.data.purchasedTimestamp,
-            //     decodedEventLog.data.referrer,
-            //     individualCommissionAmount,
-            //     txSigInfo.signature,
-            //   ].toString() + "\n"
-            // );
-            // breakCnt += 1;
-            // if (breakCnt >= 2) {
-            //   console.log({ commissionAmount });
-            //   return;
-            // }
-            txTypeCnt.purchase += 1;
-          } else if (
-            checkTxType(tx.meta.logMessages) == "ClaimPropertyToken" &&
-            eventLog != ""
-          ) {
-            txTypeCnt.claim += 1;
-          } else {
-            txTypeCnt.util += 1;
-            // console.log(tx.meta.logMessages);
-          }
-        }
-      }
-
-      lastSignature = txSigInfo.signature;
-    }
+    //         // writableStream.write(
+    //         //   [
+    //         //     user,
+    //         //     decodedEventLog.data.propertyState,
+    //         //     decodedEventLog.data.propertyMintAccount,
+    //         //     tokenPrice,
+    //         //     decodedEventLog.data.saleType,
+    //         //     purchasedAmount,
+    //         //     propertyAmount,
+    //         //     decodedEventLog.data.purchasedTimestamp,
+    //         //     decodedEventLog.data.referrer,
+    //         //     individualCommissionAmount,
+    //         //     txSigInfo.signature,
+    //         //   ].toString() + "\n"
+    //         // );
+    //         // breakCnt += 1;
+    //         // if (breakCnt >= 2) {
+    //         //   console.log({ commissionAmount });
+    //         //   return;
+    //         // }
+    //         txTypeCnt.purchase += 1;
+    //       } else if (
+    //         checkTxType(tx.meta.logMessages) == "ClaimPropertyToken" &&
+    //         eventLog != ""
+    //       ) {
+    //         txTypeCnt.claim += 1;
+    //       } else {
+    //         txTypeCnt.util += 1;
+    //         // console.log(tx.meta.logMessages);
+    //       }
+    //     }
+    //   }
+    // }
     lastSignature = txSigInfos[txSigInfos.length - 1].signature;
 
     if (txSigInfos.length < 1000) {

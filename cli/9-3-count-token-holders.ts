@@ -45,7 +45,7 @@ export const countTokenHolders = async (
     }
   });
 
-  console.log("Active account: ", activeAccounts);
+  console.log("Active account:", activeAccounts);
   // const accounts2 = await connection.getProgramAccounts(
   //   TOKEN_PROGRAM_ID, // new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
   //   {

@@ -97,6 +97,7 @@ export const distributeTokenInBatch = async (
         const uiAmountBigNumber = new BigNumber(data.amount);
         const amount = uiAmountBigNumber.times(new BigNumber(10).pow(decimals));
         console.log("Processing with ", {
+          idx: i + j + 1,
           id: data.id,
           wallet: data.wallet,
           amount: data.amount,
@@ -158,6 +159,7 @@ export const distributeTokenInBatch = async (
         );
 
         console.log("Success transfer with ", {
+          idx: i + j + 1,
           id: data.id,
           wallet: data.wallet,
           amount: data.amount,
