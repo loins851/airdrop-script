@@ -10,7 +10,7 @@ export const createRandomToken = async (
   const connection = new Connection(rpcEndpoint, "confirmed");
 
   const writableStream = fs.createWriteStream(
-    "./data_test/2-1-create-random-token.txt",
+    "./data/2-1-create-random-token.txt",
     { flags: "a+" }
   );
 
@@ -23,6 +23,6 @@ export const createRandomToken = async (
     TOKEN_PROGRAM_ID
   );
 
-  console.log(mint.publicKey.toBase58());
+  console.log("New token", mint.publicKey.toBase58());
   writableStream.write(mint.publicKey.toBase58() + "\n");
 };

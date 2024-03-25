@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "cli": "node ./dist/cli/cli.js",
-    "build:cli": "cd cli && npm run build",
+    "precli": "cd cli && npm run build",
     "build": "tsc -p cli"
   },
   "dependencies": {

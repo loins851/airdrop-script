@@ -3,7 +3,8 @@ const figlet = require("figlet");
 const fs = require("fs");
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { convertKeyPairFromArrayType } from "./0-1-convert-keypair-from-array-type";
-import { requestAirdrop } from "./1-request-airdrop";
+import { requestAirdrop } from "./1-1-request-airdrop";
+import { transferNativeToken } from "./1-2-transfer-native-token";
 import { createRandomToken } from "./2-1-create-random-token";
 import { createSpecificToken } from "./2-2-create-specific-token";
 import { mintToken } from "./3-mint-token";
@@ -13,6 +14,7 @@ import { distributeTokenInBatch } from "./7-distribute-token-in-batch";
 import { convertKeyPairFromBs58Type } from "./0-2-convert-keypair-from-bs58-type";
 import { countTxRelateToPropeasy } from "./14-count-tx-relate-to-propeasy";
 import { countTokenHolders } from "./9-3-count-token-holders";
+import { trackEscrowVaultBalance } from "./15-track-escrow-vault-balance";
 
 const __path = process.cwd();
 const program = new Command();
@@ -51,15 +53,26 @@ const getRpc = (network: string): string => {
   return rpc;
 };
 
-// yarn build:cli && yarn cli 0-1-convert-keypair-from-array-type
+// yarn cli 0-1-convert-keypair-from-array-type --keyPathFile {}
 program
   .command("0-1-convert-keypair-from-array-type")
   .description("0-1-convert-keypair-from-array-type")
-  .action(async () => {
-    convertKeyPairFromArrayType(payer);
+  .option(
+    "--keyPathFile <string>",
+    "Relative path to keypair file",
+    "/.wallets/payer.json"
+  )
+  .action(async (params) => {
+    let { keyPathFile } = params;
+    const secretKeyDirPath = JSON.parse(
+      fs.readFileSync(__path + keyPathFile).toString()
+    );
+    const secretKey = Keypair.fromSecretKey(Uint8Array.from(secretKeyDirPath));
+
+    convertKeyPairFromArrayType(secretKey);
   });
 
-// yarn build:cli && yarn cli 0-2-convert-keypair-from-bs58-type -kp {}
+// yarn cli 0-2-convert-keypair-from-bs58-type -kp {}
 program
   .command("0-2-convert-keypair-from-bs58-type")
   .description("0-2-convert-keypair-from-bs58-type")
@@ -69,10 +82,10 @@ program
     convertKeyPairFromBs58Type(keypair);
   });
 
-// yarn build:cli && yarn cli 1-request-airdrop -n testnet -r {} -a 10
+// yarn cli 1-1-request-airdrop -n testnet -r {} -a 10
 program
-  .command("1-request-airdrop")
-  .description("1-request-airdrop")
+  .command("1-1-request-airdrop")
+  .description("1-1-request-airdrop")
   .option("-n, --network <string>", "Network: testnet, localnet", "testnet")
   .option("-r, --receiver <string>", "Receiver address")
   .option("-a, --uiAmount <number>", "UI Amount", "10")
@@ -83,7 +96,20 @@ program
     await requestAirdrop(new PublicKey(receiver), uiAmount, rpc);
   });
 
-// yarn build:cli && yarn cli 2-1-create-random-token -n testnet -d 9
+// yarn cli 1-2-transfer-native-token -n testnet -r {} -a 1
+program
+  .command("1-2-transfer-native-token")
+  .description("1-2-transfer-native-token")
+  .option("-n, --network <string>", "Network: testnet, localnet", "testnet")
+  .option("-r, --receiver <string>", "Receiver address")
+  .option("-a, --uiAmount <number>", "UI Amount", "10")
+  .action(async (params) => {
+    let { network, receiver, uiAmount } = params;
+    const rpc = getRpc(network);
+    await transferNativeToken(payer, rpc, receiver, uiAmount);
+  });
+
+// yarn cli 2-1-create-random-token -n testnet -d 9
 program
   .command("2-1-create-random-token")
   .description("2-1-create-random-token")
@@ -100,7 +126,7 @@ program
     await createRandomToken(payer, rpc, decimals);
   });
 
-// yarn build:cli && yarn cli 2-2-create-specific-token -n testnet -d 9 --tokenKeypairPath /.wallets/token.json
+// yarn cli 2-2-create-specific-token -n testnet -d 9 --tokenKeypairPath /.wallets/token.json
 program
   .command("2-2-create-specific-token")
   .description("2-2-create-specific-token")
@@ -126,7 +152,7 @@ program
     await createSpecificToken(payer, rpc, tokenKeypair, decimals);
   });
 
-// yarn build:cli && yarn cli 3-mint-token -n testnet -t {} -r {} -a 10
+// yarn cli 3-mint-token -n testnet -t {} -r {} -a 10
 program
   .command("3-mint-token")
   .description("3-mint-token")
@@ -151,7 +177,7 @@ program
     );
   });
 
-// yarn build:cli && yarn cli 4-1-transfer-token-to-ATA -n testnet -t {} -r {} -a 10
+// yarn cli 4-1-transfer-token-to-ATA -n testnet -t {} -r {} -a 10
 program
   .command("4-1-transfer-token-to-ATA")
   .description("4-1-transfer-token-to-ATA")
@@ -176,7 +202,7 @@ program
     );
   });
 
-// yarn build:cli && yarn cli 4-2-transfer-token-to-non-ATA -n testnet -t {} -r {} -a 10
+// yarn cli 4-2-transfer-token-to-non-ATA -n testnet -t {} -r {} -a 10
 program
   .command("4-2-transfer-token-to-non-ATA")
   .description("4-2-transfer-token-to-non-ATA")
@@ -201,7 +227,7 @@ program
     );
   });
 
-// yarn build:cli && yarn cli 7-distribute-token-in-batch -n testnet -t {} --inputFileRelativePath {""} --resultFileRelativePath {""}
+// yarn cli 7-distribute-token-in-batch -n testnet -t {} --inputFileRelativePath {""} --resultFileRelativePath {""}
 program
   .command("7-distribute-token-in-batch")
   .description("7-distribute-token-in-batch")
@@ -237,7 +263,7 @@ program
     );
   });
 
-// yarn build:cli && yarn cli 9-3-count-token-holders -n mainnet -t {}
+// yarn cli 9-3-count-token-holders -n mainnet -t {}
 program
   .command("9-3-count-token-holders")
   .description("9-3-count-token-holders")
@@ -254,7 +280,7 @@ program
     await countTokenHolders(rpc, new PublicKey(token));
   });
 
-// yarn build:cli && yarn cli 14-count-tx-relate-to-propeasy -n mainnet --programId {} --resultFileRelativePath {""}
+// yarn cli 14-count-tx-relate-to-propeasy -n mainnet --programId {} --resultFileRelativePath {""}
 program
   .command("14-count-tx-relate-to-propeasy")
   .description("14-count-tx-relate-to-propeasy")
@@ -282,4 +308,27 @@ program
     );
   });
 
+// yarn cli 15-track-escrow-vault-balance -n mainnet --vault {} --resultFileRelativePath {""}
+program
+  .command("15-track-escrow-vault-balance")
+  .description("15-track-escrow-vault-balance")
+  .option(
+    "-n, --network <string>",
+    "Network: mainnet, testnet, localnet",
+    "testnet"
+  )
+  .option("--vault <string>", "Vault address")
+  .option(
+    "--resultFileRelativePath <string>",
+    "Result file relative path",
+    "/data/result.csv"
+  )
+  .action(async (params) => {
+    let { network, vault, resultFileRelativePath } = params;
+    const resultFilePath =
+      resultFileRelativePath != "" ? __path + resultFileRelativePath : "";
+
+    const rpc = getRpc(network);
+    await trackEscrowVaultBalance(new PublicKey(vault), rpc, resultFilePath);
+  });
 program.parse();
